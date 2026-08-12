@@ -1,0 +1,6 @@
+﻿node_modules/
+dist/
+database.sqlite
+package-lock.json
+.env
+.DS_Store

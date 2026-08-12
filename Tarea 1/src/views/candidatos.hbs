@@ -1,0 +1,29 @@
+<h1>Candidatos</h1>
+<a href="/candidatos/create">➕ Nuevo Candidato</a>
+<table>
+  <thead>
+    <tr>
+      <th>CI</th>
+      <th>Nombres</th>
+      <th>Apellidos</th>
+      <th>Cargo</th>
+      <th>Lugar</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each candidatos}}
+    <tr>
+      <td>{{ci}}</td>
+      <td>{{nombres}}</td>
+      <td>{{apellido1}} {{apellido2}}</td>
+      <td>{{cargo.nombre}}</td>
+      <td>{{lugar.nombre}}</td>
+      <td>
+        <a href="/candidatos/{{ci}}/edit">✏️ Editar</a>
+        <a href="/candidatos/{{ci}}/delete" onclick="return confirm('¿Eliminar?')">🗑️ Eliminar</a>
+      </td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>

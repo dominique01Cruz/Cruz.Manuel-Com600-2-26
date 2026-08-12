@@ -1,0 +1,37 @@
+<h1>{{#if candidato}}Editar{{else}}Nuevo{{/if}} Candidato</h1>
+<form method="POST" action="/candidatos">
+  <div>
+    <label>CI:</label>
+    <input name="ci" value="{{candidato.ci}}" {{#if candidato}}readonly{{/if}} required>
+  </div>
+  <div>
+    <label>Nombres:</label>
+    <input name="nombres" value="{{candidato.nombres}}" required>
+  </div>
+  <div>
+    <label>Apellido 1:</label>
+    <input name="apellido1" value="{{candidato.apellido1}}" required>
+  </div>
+  <div>
+    <label>Apellido 2:</label>
+    <input name="apellido2" value="{{candidato.apellido2}}" required>
+  </div>
+  <div>
+    <label>Cargo:</label>
+    <select name="cargo_id" required>
+      {{#each cargos}}
+      <option value="{{id}}" {{#if (eq id ../candidato.cargo_id)}}selected{{/if}}>{{nombre}}</option>
+      {{/each}}
+    </select>
+  </div>
+  <div>
+    <label>Lugar:</label>
+    <select name="lugar_id" required>
+      {{#each lugares}}
+      <option value="{{id}}" {{#if (eq id ../candidato.lugar_id)}}selected{{/if}}>{{nombre}}</option>
+      {{/each}}
+    </select>
+  </div>
+  <button type="submit">💾 Guardar</button>
+  <a href="/candidatos">Cancelar</a>
+</form>

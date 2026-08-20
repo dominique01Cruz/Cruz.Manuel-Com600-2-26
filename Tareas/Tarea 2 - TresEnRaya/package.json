@@ -1,0 +1,13 @@
+{
+  "name": "tres-en-raya-websocket",
+  "version": "1.0.0",
+  "description": "Tres en raya: tu contra el servidor via WebSocket",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

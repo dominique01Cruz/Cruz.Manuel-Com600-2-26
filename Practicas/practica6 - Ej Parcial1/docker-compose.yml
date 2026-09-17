@@ -1,0 +1,43 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: mongo_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - app_net
+
+  rest:
+    build: .
+    container_name: rest_api
+    command: node rest.js
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/trabajadores
+    depends_on:
+      - mongo
+    networks:
+      - app_net
+
+  graphql:
+    build: .
+    container_name: graphql_api
+    command: node graphql.js
+    ports:
+      - "4000:4000"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/trabajadores
+    depends_on:
+      - mongo
+    networks:
+      - app_net
+
+volumes:
+  mongo_data:
+
+networks:
+  app_net:
+    driver: bridge

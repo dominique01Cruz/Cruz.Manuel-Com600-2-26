@@ -1,0 +1,15 @@
+{
+  "name": "trabajador-api",
+  "version": "1.0.0",
+  "main": "rest.js",
+  "scripts": {
+    "rest": "node rest.js",
+    "graphql": "node graphql.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "mongoose": "^8.5.0",
+    "apollo-server-express": "^3.13.0",
+    "graphql": "^16.9.0"
+  }
+}

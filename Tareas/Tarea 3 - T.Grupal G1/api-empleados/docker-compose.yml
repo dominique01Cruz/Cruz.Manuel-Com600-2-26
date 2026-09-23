@@ -1,0 +1,9 @@
+
+services:
+  api-empleados:
+    build: .
+    container_name: api-empleados
+    ports:
+      - "3000:3000"   # REST + GraphQL + Swagger
+      - "9090:9090"   # gRPC
+    restart: unless-stopped

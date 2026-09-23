@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+option java_package = "com.grupo1.api_empleados.grpc";
+option java_multiple_files = true;
+option java_outer_classname = "EmpleadoProto";
+
+message EmpleadoRequest {
+    int64 id = 1;
+}
+
+message EmpleadoResponse {
+    int64 id = 1;
+    string nombre = 2;
+    string puesto = 3;
+    double salario = 4;
+}
+
+message EmpleadoListResponse {
+    repeated EmpleadoResponse empleados = 1;
+}
+
+message Empty {}
+
+service EmpleadoService {
+    rpc GetEmpleado (EmpleadoRequest) returns (EmpleadoResponse);
+    rpc ListEmpleados (Empty) returns (EmpleadoListResponse);
+}

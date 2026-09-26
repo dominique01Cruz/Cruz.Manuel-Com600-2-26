@@ -1,0 +1,112 @@
+services:
+  db-pacientes:
+    image: mysql:8.0
+#    pull_policy: never 
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - vol-pacientes:/var/lib/mysql
+      - ./ms-pacientes/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - clinica-net
+
+  db-medicos:
+    image: postgres:16
+#     pull_policy: never
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - vol-medicos:/var/lib/postgresql/data
+      - ./ms-medicos/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - clinica-net
+
+  db-citas:
+    image: mongo:7
+#     pull_policy: never
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB}
+    volumes:
+      - vol-citas:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - clinica-net
+
+  ms-pacientes:
+    build: ./ms-pacientes
+
+    ports:
+      - "3001:3001"
+    environment:
+      DB_HOST: db-pacientes
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      DB_NAME: ${MYSQL_DATABASE}
+    depends_on:
+      db-pacientes:
+        condition: service_healthy
+    networks:
+      - clinica-net
+
+  ms-medicos:
+    build: ./ms-medicos
+
+    environment:
+      DB_HOST: db-medicos
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_NAME: ${POSTGRES_DB}
+    depends_on:
+      db-medicos:
+        condition: service_healthy
+    networks:
+      - clinica-net
+
+  ms-citas:
+    build: ./ms-citas
+   
+    ports:
+      - "4000:4000"
+    environment:
+      MONGO_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@db-citas:27017/${MONGO_DB}?authSource=admin
+      PACIENTES_URL: http://ms-pacientes:3001
+      MEDICOS_GRPC: ms-medicos:50051
+    depends_on:
+      db-citas:
+        condition: service_healthy
+      ms-pacientes:
+        condition: service_started
+      ms-medicos:
+        condition: service_started
+    networks:
+      - clinica-net
+
+volumes:
+  vol-pacientes:
+  vol-medicos:
+  vol-citas:
+
+networks:
+  clinica-net:
+    driver: bridge

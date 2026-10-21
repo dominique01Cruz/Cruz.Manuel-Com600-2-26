@@ -1,0 +1,8 @@
+replicaCount: 2
+image:
+  repository: nginxdemos/hello
+  tag: "plain-text"
+service:
+  port: 80
+ingress:
+  host: tareas.localhost

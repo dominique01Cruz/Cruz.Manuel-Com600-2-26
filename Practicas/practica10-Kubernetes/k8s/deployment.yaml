@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tareas
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tareas
+  template:
+    metadata:
+      labels:
+        app: tareas
+    spec:
+      containers:
+        - name: api
+          image: nginxdemos/hello:latest
+          ports:
+            - containerPort: 80
+          envFrom:
+            - configMapRef:
+                name: tareas-config
+            - secretRef:
+                name: tareas-secret
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 10
